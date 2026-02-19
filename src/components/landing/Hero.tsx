@@ -1,16 +1,64 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight, Play, Mic } from "lucide-react";
+
+function LiveWaveform() {
+  const bars = 40;
+  return (
+    <div className="flex h-8 items-center gap-[2px]">
+      {Array.from({ length: bars }).map((_, i) => (
+        <div
+          key={i}
+          className="w-[3px] rounded-full bg-primary/60"
+          style={{
+            animation: `waveform 1.2s ease-in-out ${i * 0.03}s infinite alternate`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function Hero() {
   return (
     <section className="relative overflow-hidden px-4 pt-20 pb-16 sm:pt-28 sm:pb-24">
+      <style>{`
+        @keyframes waveform {
+          0% { height: 4px; }
+          25% { height: 16px; }
+          50% { height: 8px; }
+          75% { height: 22px; }
+          100% { height: 6px; }
+        }
+        @keyframes mic-pulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
+          50% { box-shadow: 0 0 0 12px rgba(249, 115, 22, 0); }
+        }
+      `}</style>
+
       <div className="relative z-10 mx-auto max-w-4xl text-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="mb-6 flex justify-center"
+        >
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5">
+            <div
+              className="flex h-6 w-6 items-center justify-center rounded-full bg-primary"
+              style={{ animation: "mic-pulse 2s ease-in-out infinite" }}
+            >
+              <Mic className="h-3 w-3 text-white" />
+            </div>
+            <span className="text-xs font-semibold text-primary">Voice-first product management</span>
+          </div>
+        </motion.div>
+
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5, delay: 0.06 }}
           className="mb-6 text-4xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-6xl"
         >
           The AI product manager
@@ -21,7 +69,7 @@ export default function Hero() {
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.08 }}
+          transition={{ duration: 0.5, delay: 0.12 }}
           className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-text-secondary"
         >
           Turn ideas into clear requirements, score your backlog for dev-readiness,
@@ -31,7 +79,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.16 }}
+          transition={{ duration: 0.5, delay: 0.18 }}
           className="flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
           <a
@@ -80,22 +128,18 @@ export default function Hero() {
                 <span className="text-sm font-semibold text-foreground">Prodacto AI</span>
               </div>
 
-              <div className="mb-4 rounded-lg border border-border bg-muted p-3">
+              <div className="mb-4 rounded-lg border border-primary/20 bg-primary/5 p-3">
                 <div className="mb-2 flex items-center gap-2">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
-                    <div className="h-2 w-2 rounded-full bg-primary" />
+                  <div
+                    className="flex h-6 w-6 items-center justify-center rounded-full bg-primary"
+                    style={{ animation: "mic-pulse 2s ease-in-out infinite" }}
+                  >
+                    <Mic className="h-3 w-3 text-white" />
                   </div>
-                  <span className="text-xs text-text-tertiary">Voice input</span>
+                  <span className="text-xs font-medium text-primary">Listening...</span>
+                  <span className="ml-auto text-[10px] text-primary/60">0:04</span>
                 </div>
-                <div className="flex h-6 items-end gap-[2px]">
-                  {[8,13,17,20,19,15,10,6,5,8,13,17,20,19,15,10,6,5,8,13,17,20,19,15,10,6,5,8,13,17,20,19].map((h, i) => (
-                    <div
-                      key={i}
-                      className="w-[3px] rounded-full bg-primary/40"
-                      style={{ height: `${h}px` }}
-                    />
-                  ))}
-                </div>
+                <LiveWaveform />
               </div>
 
               <div className="mb-3 rounded-lg bg-muted p-3">
