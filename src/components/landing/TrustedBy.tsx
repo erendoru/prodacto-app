@@ -5,16 +5,10 @@ const companies = [
   "Armut",
   "Modanisa",
   "Miro",
-  "Sasi",
-  "LinearX",
-  "designBro",
-  "Param",
-  "Armut",
-  "Modanisa",
-  "Miro",
-  "Sasi",
-  "LinearX",
-  "designBro",
+  "Loom",
+  "Notion",
+  "Linear",
+  "Figma",
 ];
 
 export default function TrustedBy() {
@@ -29,13 +23,13 @@ export default function TrustedBy() {
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-white to-transparent" />
 
         <div className="marquee-track">
-          {companies.map((name) => (
-            <span key={name} className="text-3xl font-bold text-text-tertiary/40">
+          {companies.map((name, i) => (
+            <span key={`a-${i}`} className="text-3xl font-bold text-text-tertiary/40">
               {name}
             </span>
           ))}
-          {companies.map((name) => (
-            <span key={`dup-${name}`} className="text-3xl font-bold text-text-tertiary/40">
+          {companies.map((name, i) => (
+            <span key={`b-${i}`} className="text-3xl font-bold text-text-tertiary/40">
               {name}
             </span>
           ))}

@@ -23,20 +23,6 @@ function LiveWaveform() {
 export default function Hero() {
   return (
     <section className="relative overflow-hidden px-4 pt-20 pb-16 sm:pt-28 sm:pb-24">
-      <style>{`
-        @keyframes waveform {
-          0% { height: 4px; }
-          25% { height: 16px; }
-          50% { height: 8px; }
-          75% { height: 22px; }
-          100% { height: 6px; }
-        }
-        @keyframes mic-pulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
-          50% { box-shadow: 0 0 0 12px rgba(249, 115, 22, 0); }
-        }
-      `}</style>
-
       <div className="relative z-10 mx-auto max-w-4xl text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
