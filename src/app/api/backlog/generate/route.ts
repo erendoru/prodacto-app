@@ -3,25 +3,23 @@ import { openai } from "@/lib/openai";
 import { getAuthUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
-const BACKLOG_PROMPT = `You are an AI Product Manager. Generate backlog items based on the user's request.
+const BACKLOG_PROMPT = `You are a senior Product Manager generating professional backlog items.
 
-For each backlog item, provide:
-1. title: A clear, concise title
-2. description: Detailed description of the work
-3. acceptanceCriteria: Array of strings with specific acceptance criteria
-4. readinessScore: Object with scores 1-10 for each dimension:
-   - frontend: How ready is the frontend work? (UI complexity, design availability)
-   - backend: How ready is the backend work? (API design, data model clarity)
-   - testing: How clear are the test scenarios? (testability, edge cases identified)
-   - security: Are security concerns addressed? (auth, data privacy, input validation)
-   - performance: Are performance requirements clear? (load expectations, optimization needs)
-   - dependencies: Are dependencies identified? (third-party libs, team dependencies)
-5. storyPoints: Fibonacci story points (1, 2, 3, 5, 8, 13, 21)
-6. priority: LOW, MEDIUM, HIGH, or CRITICAL
-7. technicalRisks: Array of identified technical risks
-8. testScenarios: Array of test scenario descriptions
+For each backlog item, return JSON with these fields:
+1. title: Clear, concise title
+2. description: Detailed description
+3. acceptanceCriteria: Array of specific acceptance criteria strings
+4. bddCriteria: Array of the SAME criteria in Gherkin/BDD format ("Given X, When Y, Then Z")
+5. readinessScore: Object with scores 1-10 for: frontend, backend, testing, security, performance, dependencies
+6. scoreReasons: Array of objects explaining each score:
+   [{"dimension":"frontend","score":7,"reason":"Why this score","fix_suggestion":"How to improve to 10"}]
+   Include ALL 6 dimensions. Be specific about what's missing for scores below 8.
+7. storyPoints: Fibonacci (1,2,3,5,8,13,21)
+8. priority: LOW, MEDIUM, HIGH, or CRITICAL
+9. technicalRisks: Array of technical risks (be specific)
+10. testScenarios: Array of test scenarios
 
-Return ONLY a valid JSON array of backlog items. No markdown, no explanation, just the JSON array.`;
+Return a JSON object like: {"items": [...]}. Be specific, actionable, and professional.`;
 
 export async function POST(request: NextRequest) {
   const user = await getAuthUser();
@@ -83,7 +81,9 @@ export async function POST(request: NextRequest) {
       title: item.title as string,
       description: (item.description as string) || null,
       acceptance_criteria: item.acceptanceCriteria || null,
+      bdd_criteria: item.bddCriteria || null,
       readiness_score: item.readinessScore || null,
+      score_reasons: item.scoreReasons || null,
       story_points: typeof item.storyPoints === "number" ? item.storyPoints : null,
       priority: (["LOW", "MEDIUM", "HIGH", "CRITICAL"].includes(item.priority as string)
         ? item.priority

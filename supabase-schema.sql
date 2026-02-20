@@ -95,10 +95,23 @@ CREATE TABLE "market_analyses" (
 );
 
 -- CreateTable
+CREATE TABLE "chat_sessions" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "user_id" UUID NOT NULL,
+    "project_id" UUID,
+    "title" TEXT NOT NULL DEFAULT 'New Chat',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "chat_sessions_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "chat_messages" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "user_id" UUID NOT NULL,
     "project_id" UUID,
+    "session_id" UUID,
     "role" "MessageRole" NOT NULL,
     "content" TEXT NOT NULL,
     "metadata" JSONB,
@@ -175,8 +188,11 @@ ALTER TABLE "documents" ADD CONSTRAINT "documents_user_id_fkey" FOREIGN KEY ("us
 ALTER TABLE "backlog_items" ADD CONSTRAINT "backlog_items_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "projects"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "backlog_items" ADD CONSTRAINT "backlog_items_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "market_analyses" ADD CONSTRAINT "market_analyses_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "chat_sessions" ADD CONSTRAINT "chat_sessions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "chat_sessions" ADD CONSTRAINT "chat_sessions_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "projects"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "chat_messages" ADD CONSTRAINT "chat_messages_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "chat_messages" ADD CONSTRAINT "chat_messages_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "projects"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "chat_messages" ADD CONSTRAINT "chat_messages_session_id_fkey" FOREIGN KEY ("session_id") REFERENCES "chat_sessions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "context_vault" ADD CONSTRAINT "context_vault_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "projects"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "context_vault" ADD CONSTRAINT "context_vault_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "experiments" ADD CONSTRAINT "experiments_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "projects"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -190,6 +206,7 @@ ALTER TABLE "projects" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "documents" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "backlog_items" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "market_analyses" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "chat_sessions" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "chat_messages" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "context_vault" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "experiments" ENABLE ROW LEVEL SECURITY;
@@ -217,6 +234,11 @@ CREATE POLICY "Users can delete own backlog items" ON "backlog_items" FOR DELETE
 
 CREATE POLICY "Users can view own market analyses" ON "market_analyses" FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own market analyses" ON "market_analyses" FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can view own chat sessions" ON "chat_sessions" FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own chat sessions" ON "chat_sessions" FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own chat sessions" ON "chat_sessions" FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own chat sessions" ON "chat_sessions" FOR DELETE USING (auth.uid() = user_id);
 
 CREATE POLICY "Users can view own chat messages" ON "chat_messages" FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own chat messages" ON "chat_messages" FOR INSERT WITH CHECK (auth.uid() = user_id);

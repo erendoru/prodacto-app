@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const { messages, projectId } = await request.json();
+  const { messages, projectId, sessionId } = await request.json();
 
   let projectContext = "";
   if (projectId) {
@@ -65,9 +65,14 @@ export async function POST(request: NextRequest) {
   await supabase.from("chat_messages").insert({
     user_id: user.id,
     project_id: projectId || null,
+    session_id: sessionId || null,
     role: "USER",
     content: lastUserMessage.content,
   });
+
+  if (sessionId) {
+    await supabase.from("chat_sessions").update({ updated_at: new Date().toISOString() }).eq("id", sessionId);
+  }
 
   await supabase
     .from("users")
@@ -102,9 +107,15 @@ export async function POST(request: NextRequest) {
         await supabase.from("chat_messages").insert({
           user_id: user.id,
           project_id: projectId || null,
+          session_id: sessionId || null,
           role: "ASSISTANT",
           content: assistantMessage,
         });
+
+        if (sessionId && messages.length <= 1) {
+          const titleText = lastUserMessage.content.slice(0, 60) + (lastUserMessage.content.length > 60 ? "..." : "");
+          await supabase.from("chat_sessions").update({ title: titleText }).eq("id", sessionId);
+        }
 
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         controller.close();

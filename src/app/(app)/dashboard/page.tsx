@@ -38,9 +38,9 @@ const quickActions = [
     color: "bg-purple-50 text-purple-600",
   },
   {
-    label: "Voice Command",
-    description: "Speak to create content",
-    href: "/chat?voice=true",
+    label: "Voice Studio",
+    description: "Record & structure notes",
+    href: "/voice-studio",
     icon: Mic,
     color: "bg-primary/10 text-primary",
   },

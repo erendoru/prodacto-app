@@ -26,7 +26,6 @@ const navItems = [
   { label: "Projects", href: "/projects", icon: FolderKanban },
   { label: "PRD Generator", href: "/prd", icon: FileText },
   { label: "AI Chat", href: "/chat", icon: MessageSquare },
-  { label: "Voice Command", href: "/chat?voice=true", icon: Mic },
   { label: "Backlog", href: "/backlog", icon: ListChecks },
   { label: "Context Vault", href: "/context-vault", icon: Database },
   { label: "AI Review", href: "/ai-review", icon: Shield },
